@@ -6,16 +6,20 @@ namespace FolderScan
     {
         static void Main(string[] args)
         {
-            string directoryForScan = ".";
-            string outputFile = $"sizes-{ DateTime.Now.ToString("yyyy-MM-hh")}.txt";
+            // Значения параметров по-умолчанию.
+            string directory = Path.GetFullPath(@".");
+            string outputFile = $"sizes-{DateTime.Now.ToString("yyyy-MM-dd")}.txt";
+            bool quiteOn = false;
+            bool humanreadOn = false;
 
-            FileSystemEntireCreator FSECreator = new FileSystemEntireCreator();
-            List<string> FSysEntire = FSECreator.GetFSystemEntire(directoryForScan);
+            ParametersProcessor.ProcessParameters(args, ref directory, ref outputFile, ref quiteOn, ref humanreadOn);
 
-            DirectoriesTreeCreator dtCreator = new DirectoriesTreeCreator();
-            List<string> directoriesTree = dtCreator.CreateDirectoriesTree(FSysEntire);
+            Notifier.StartProcess();
 
-            DirectoriesTreePrinter.PrintDirectoriesTree(directoriesTree, outputFile, true);
+            List<string> dirTree = DirectoriesTreeCreator.GetFormattingDirectoriesTree(directory, humanreadOn);
+            DirectoriesTreePrinter.PrintDirectoriesTree(dirTree, outputFile, quiteOn);
+
+            Notifier.EndProcess();
         }
     }
 }
